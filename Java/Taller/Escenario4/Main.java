@@ -45,9 +45,9 @@ public class Main {
         System.out.println();
 
         // Expulsar jugador actual — debe pasar el turno al siguiente
-        System.out.println("Actual antes de expulsar: " + juego.actual.getValor());
-        juego.eliminar(juego.actual.getValor());
-        System.out.println("Actual despues de expulsar: " + juego.actual.getValor());
+        System.out.println("Actual antes de expulsar: " + juego.getActual());
+        juego.eliminar(juego.getActual());
+        System.out.println("Actual despues de expulsar: " + juego.getActual());
         juego.mostrar();
         System.out.println();
 
@@ -57,7 +57,7 @@ public class Main {
 
         // Vaciar partida
         while (!juego.esVacia()) {
-            juego.eliminar(juego.actual.getValor());
+            juego.eliminar(juego.getActual());
         }
         juego.mostrar();
         juego.avanzar();

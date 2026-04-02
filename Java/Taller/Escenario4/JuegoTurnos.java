@@ -124,6 +124,11 @@ public class JuegoTurnos<T> {
         System.out.println(" <-> (circular) | jugadores=" + tam);
     }
 
+    // Getter para el valor del jugador actual
+    public T getActual() {
+        return actual != null ? actual.getValor() : null;
+    }
+
     public boolean esVacia() {
         return inicio == null;
     }
