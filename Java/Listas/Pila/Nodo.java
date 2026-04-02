@@ -1,5 +1,5 @@
 public class Nodo<T> {
-    private T valor;
+    private final T valor;
     private Nodo<T> proximo;
 
     public Nodo(T valor) {
