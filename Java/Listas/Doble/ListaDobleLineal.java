@@ -1,6 +1,6 @@
-public class ListaDobleLineal <T> {
+public class ListaDobleLineal<T> {
     private NodoDoble<T> inicial;
-    private NodoDoble<T> ultimo;  // Referencia al último nodo para O(1) operaciones
+    private NodoDoble<T> ultimo;
     private int tam;
 
     public ListaDobleLineal() {
@@ -9,7 +9,7 @@ public class ListaDobleLineal <T> {
         tam = 0;
     }
 
-    public boolean insertarFinal(T valor) {
+    public void insertarFinal(T valor) {
         NodoDoble<T> nuevo = new NodoDoble<>(valor);
 
         if (inicial == null) {
@@ -21,60 +21,48 @@ public class ListaDobleLineal <T> {
             ultimo = nuevo;
         }
         tam++;
-        return true;
     }
 
     public void insertarInicio(T valor) {
-        NodoDoble<T> nuevoNodo = new NodoDoble<>(valor);
+        NodoDoble<T> nuevo = new NodoDoble<>(valor);
 
         if (inicial == null) {
-            inicial = nuevoNodo;
-            ultimo = nuevoNodo;
+            inicial = nuevo;
+            ultimo = nuevo;
         } else {
-            nuevoNodo.setProximo(inicial);
-            inicial.setAnterior(nuevoNodo);
-            inicial = nuevoNodo;
+            nuevo.setProximo(inicial);
+            inicial.setAnterior(nuevo);
+            inicial = nuevo;
         }
         tam++;
     }
 
     public void eliminarFinal() {
-        if (inicial == null || tam == 0) {
-            return;
-        }
+        if (ultimo == null) return;
 
-        if (tam == 1) {
-            inicial = null;
-            ultimo = null;
-            tam--;
-            return;
+        ultimo = ultimo.getAnterior();
+        if (ultimo != null) {
+            ultimo.setProximo(null);
+        } else {
+            inicial = null; // la lista quedó vacía
         }
-
-        NodoDoble<T> nuevoUltimo = ultimo.getAnterior();
-        nuevoUltimo.setProximo(null);
-        ultimo = nuevoUltimo;
         tam--;
     }
 
     public void eliminarInicio() {
-        if (inicial == null || tam == 0) {
-            return;
-        }
-
-        if (tam == 1) {
-            inicial = null;
-            ultimo = null;
-            tam--;
-            return;
-        }
+        if (inicial == null) return;
 
         inicial = inicial.getProximo();
-        inicial.setAnterior(null);
+        if (inicial != null) {
+            inicial.setAnterior(null);
+        } else {
+            ultimo = null; // la lista quedó vacía
+        }
         tam--;
     }
 
     public boolean esVacia() {
-        return inicial == null && tam == 0;
+        return inicial == null;
     }
 
     public int localizar(T valor) {
@@ -82,28 +70,19 @@ public class ListaDobleLineal <T> {
         int index = 0;
 
         while (tempo != null) {
-            if (tempo.getValor().equals(valor)) {
-                return index;
-            }
+            if (tempo.getValor().equals(valor)) return index;
             tempo = tempo.getProximo();
             index++;
         }
         return -1;
     }
 
-    // Ventaja de doble enlace: búsqueda desde el final
     public int localizarDesdeFinal(T valor) {
-        if (ultimo == null) {
-            return -1;
-        }
-
         NodoDoble<T> tempo = ultimo;
         int index = tam - 1;
 
         while (tempo != null) {
-            if (tempo.getValor().equals(valor)) {
-                return index;
-            }
+            if (tempo.getValor().equals(valor)) return index;
             tempo = tempo.getAnterior();
             index--;
         }
@@ -112,22 +91,19 @@ public class ListaDobleLineal <T> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("ListaDobleLineal{");
+        StringBuilder sb = new StringBuilder("ListaDobleLineal{ ");
         NodoDoble<T> tempo = inicial;
-        if (tempo != null) {
-            do {
-                sb.append(tempo.getValor());
-                tempo = tempo.getProximo();
-                if (tempo != null) {
-                    sb.append(" <-> ");
-                }
-            } while (tempo != null);
+
+        while (tempo != null) {
+            sb.append(tempo.getValor());
+            tempo = tempo.getProximo();
+            if (tempo != null) sb.append(" <-> ");
         }
-        sb.append(", tam=").append(tam).append("}");
+
+        sb.append(", tam=").append(tam).append(" }");
         return sb.toString();
     }
 
-    // Getters y setters
     public NodoDoble<T> getInicial() {
         return inicial;
     }

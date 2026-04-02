@@ -1,4 +1,4 @@
-public class ListaSimplementeEnlazada <T> {
+public class ListaSimplementeEnlazada<T> {
     private Nodo<T> inicial;
     private int tam;
 
@@ -7,93 +7,67 @@ public class ListaSimplementeEnlazada <T> {
         tam = 0;
     }
 
-    public boolean insertarFinal(T valor) {
+    public void insertarFinal(T valor) {
         Nodo<T> nuevo = new Nodo<>(valor);
-
-        if(inicial == null && tam == 0) {
+        if (inicial == null) {
             inicial = nuevo;
-            tam++;
-            return true;
-        }
+        } else {
             Nodo<T> tempo = inicial;
-            while(tempo.getProximo() != null) {
+            while (tempo.getProximo() != null) {
                 tempo = tempo.getProximo();
             }
             tempo.setProximo(nuevo);
-            tam++;
-            return true;
-
+        }
+        tam++;
     }
 
     public void insertarInicio(T valor) {
-        Nodo<T> nuevoNodo = new Nodo<>(valor);
-
-        nuevoNodo.setProximo(inicial);
-        inicial = nuevoNodo;
+        Nodo<T> nuevo = new Nodo<>(valor);
+        nuevo.setProximo(inicial);
+        inicial = nuevo;
         tam++;
     }
 
     public void eliminarFinal() {
-        if(inicial != null && inicial.getProximo() == null && tam == 1) {
+        if (inicial == null) return;
+        if (inicial.getProximo() == null) {
             inicial = null;
-            tam--;
-            return;
+        } else {
+            Nodo<T> tempo = inicial;
+            while (tempo.getProximo().getProximo() != null) {
+                tempo = tempo.getProximo();
+            }
+            tempo.setProximo(null);
         }
-
-        Nodo<T> tempo = inicial;
-        while(tempo.getProximo().getProximo() != null) {
-            tempo = tempo.getProximo();
-        }
-        tempo.setProximo(null);
         tam--;
     }
 
     public void eliminarInicio() {
-        if(inicial != null && tam > 0){
-            inicial = inicial.getProximo();
-            tam--;
-        }
+        if (inicial == null) return;
+        inicial = inicial.getProximo();
+        tam--;
     }
 
-    public boolean esVacia(){
-        return inicial == null && tam == 0;
+    public boolean esVacia() {
+        return inicial == null;
     }
 
     public int localizar(T valor) {
         Nodo<T> tempo = inicial;
         int index = 0;
-
-        do {
-            if(tempo.getValor().equals(valor)) {
-                return index;
-            }
+        while (tempo != null) {
+            if (tempo.getValor().equals(valor)) return index;
             tempo = tempo.getProximo();
             index++;
-        }while(tempo != null);
-
+        }
         return -1;
     }
 
+    public int getTam() { return tam; }
+    public Nodo<T> getInicial() { return inicial; }
+
     @Override
     public String toString() {
-        return "ListaSimplementeEnlazada{" +
-                "inicial = " + inicial +
-                '}';
-    }
-
-    public Nodo<T> getInicial() {
-        return inicial;
-    }
-
-    public void setInicial(Nodo<T> inicial) {
-        this.inicial = inicial;
-    }
-
-    public int getTam() {
-        return tam;
-    }
-
-    public void setTam(int tam) {
-        this.tam = tam;
+        return "ListaSimplementeEnlazada{ inicial = " + inicial + " }";
     }
 }

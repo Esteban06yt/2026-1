@@ -1,114 +1,93 @@
-public class ListaSimpleCircular <T> {
+public class ListaSimpleCircular<T> {
     private Nodo<T> inicial;
+    private Nodo<T> ultimo; // evita recorrer toda la lista
     private int tam;
 
     public ListaSimpleCircular() {
         inicial = null;
+        ultimo = null;
         tam = 0;
     }
 
-    public boolean insertarFinal(T valor) {
+    public void insertarFinal(T valor) {
         Nodo<T> nuevo = new Nodo<>(valor);
 
         if (inicial == null) {
             inicial = nuevo;
-            nuevo.setProximo(inicial); // Se apunta a sí mismo (circular)
-            tam++;
-            return true;
+            ultimo = nuevo;
+            nuevo.setProximo(inicial);
+        } else {
+            // O(1) gracias a ultimo
+            ultimo.setProximo(nuevo);
+            nuevo.setProximo(inicial);
+            ultimo = nuevo;
         }
-
-        Nodo<T> tempo = inicial;
-        // Recorrer hasta el último nodo (el que apunta a inicial)
-        while (tempo.getProximo() != inicial) {
-            tempo = tempo.getProximo();
-        }
-        tempo.setProximo(nuevo);
-        nuevo.setProximo(inicial); // Conectar con el inicio
         tam++;
-        return true;
     }
 
     public void insertarInicio(T valor) {
-        Nodo<T> nuevoNodo = new Nodo<>(valor);
+        Nodo<T> nuevo = new Nodo<>(valor);
 
         if (inicial == null) {
-            inicial = nuevoNodo;
-            nuevoNodo.setProximo(inicial);
+            inicial = nuevo;
+            ultimo = nuevo;
+            nuevo.setProximo(inicial);
         } else {
-            Nodo<T> ultimo = inicial;
-            // Encontrar el último nodo
-            while (ultimo.getProximo() != inicial) {
-                ultimo = ultimo.getProximo();
-            }
-            nuevoNodo.setProximo(inicial);
-            inicial = nuevoNodo;
-            ultimo.setProximo(inicial); // Actualizar referencia del último
+            // O(1) gracias a ultimo
+            nuevo.setProximo(inicial);
+            ultimo.setProximo(nuevo);
+            inicial = nuevo;
         }
         tam++;
     }
 
     public void eliminarFinal() {
-        if (inicial == null || tam == 0) {
-            return;
-        }
+        if (inicial == null) return;
 
         if (tam == 1) {
             inicial = null;
-            tam--;
-            return;
+            ultimo = null;
+        } else {
+            // Sigue siendo O(n): sin enlace anterior no hay otra forma
+            Nodo<T> tempo = inicial;
+            while (tempo.getProximo() != ultimo) {
+                tempo = tempo.getProximo();
+            }
+            tempo.setProximo(inicial);
+            ultimo = tempo;
         }
-
-        Nodo<T> tempo = inicial;
-        // Ir hasta el penúltimo nodo
-        while (tempo.getProximo().getProximo() != inicial) {
-            tempo = tempo.getProximo();
-        }
-
-        tempo.setProximo(inicial); // Penúltimo apunta al primero
         tam--;
     }
 
     public void eliminarInicio() {
-        if (inicial == null || tam == 0) {
-            return;
-        }
+        if (inicial == null) return;
 
         if (tam == 1) {
             inicial = null;
-            tam--;
-            return;
+            ultimo = null;
+        } else {
+            // O(1) gracias a ultimo
+            inicial = inicial.getProximo();
+            ultimo.setProximo(inicial);
         }
-
-        Nodo<T> ultimo = inicial;
-        // Encontrar el último nodo
-        while (ultimo.getProximo() != inicial) {
-            ultimo = ultimo.getProximo();
-        }
-
-        inicial = inicial.getProximo();
-        ultimo.setProximo(inicial); // Último apunta al nuevo inicio
         tam--;
     }
 
     public boolean esVacia() {
-        return inicial == null && tam == 0;
+        return inicial == null; // sin && tam == 0
     }
 
     public int localizar(T valor) {
-        if (inicial == null) {
-            return -1;
-        }
+        if (inicial == null) return -1;
 
         Nodo<T> tempo = inicial;
         int index = 0;
 
         do {
-            if (tempo.getValor().equals(valor)) {
-                return index;
-            }
+            if (tempo.getValor().equals(valor)) return index;
             tempo = tempo.getProximo();
             index++;
-        } while (tempo != inicial); // Condición circular
+        } while (tempo != inicial);
 
         return -1;
     }
@@ -121,9 +100,7 @@ public class ListaSimpleCircular <T> {
             do {
                 sb.append(tempo.getValor());
                 tempo = tempo.getProximo();
-                if (tempo != inicial) {
-                    sb.append(" -> ");
-                }
+                if (tempo != inicial) sb.append(" -> ");
             } while (tempo != inicial);
             sb.append(" -> (circular)");
         }
@@ -135,15 +112,7 @@ public class ListaSimpleCircular <T> {
         return inicial;
     }
 
-    public void setInicial(Nodo<T> inicial) {
-        this.inicial = inicial;
-    }
-
     public int getTam() {
         return tam;
-    }
-
-    public void setTam(int tam) {
-        this.tam = tam;
     }
 }
